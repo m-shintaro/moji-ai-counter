@@ -7,7 +7,7 @@ interface AIAdjustPanelProps {
 }
 
 const AIAdjustPanel = ({ currentCount, onAdjust, isLoading }: AIAdjustPanelProps) => {
-  const [targetCount, setTargetCount] = useState<number>(currentCount)
+  const [targetCount, setTargetCount] = useState<number>(currentCount || 100)
 
   const handleAdjust = (action: 'expand' | 'reduce' | 'auto') => {
     if (targetCount > 0) {
@@ -27,12 +27,14 @@ const AIAdjustPanel = ({ currentCount, onAdjust, isLoading }: AIAdjustPanelProps
             目標文字数:
           </label>
           <input
-            type="number"
+            type="text"
             value={targetCount}
-            onChange={(e) => setTargetCount(Number(e.target.value))}
-            className="bg-github-dark-bg border border-github-dark-border rounded px-3 py-1 text-github-dark-text w-24 focus:outline-none focus:ring-2 focus:ring-github-dark-accent"
-            min="1"
-            disabled={isLoading}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9]/g, '')
+              setTargetCount(Number(value) || 0)
+            }}
+            className="bg-github-dark-bg border border-github-dark-border rounded px-3 py-1 text-github-dark-text w-24 focus:outline-none focus:ring-2 focus:ring-github-dark-accent [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            placeholder="文字数"
           />
           <span className="text-github-dark-text-secondary">文字</span>
           <span className="text-sm text-github-dark-text-secondary">
