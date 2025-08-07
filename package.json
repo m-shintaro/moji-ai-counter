@@ -1,7 +1,8 @@
 {
   "name": "moji-count",
   "version": "1.0.0",
-  "description": "",
+  "description": "日本語文字カウントツール with AI調整機能",
+  "homepage": "https://m-shintaro.github.io/moji-ai-counter/",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
