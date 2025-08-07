@@ -42,14 +42,38 @@ ${text}
     return text
   }
 
-  try {
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const adjustedText = response.text()
-    
-    return adjustedText.trim()
-  } catch (error) {
-    console.error('Gemini API error:', error)
-    throw new Error('文章の調整に失敗しました')
+  const maxRetries = 3
+  const retryDelay = 1000 // 1 second
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      const adjustedText = response.text()
+      
+      return adjustedText.trim()
+    } catch (error: any) {
+      console.error(`Gemini API error (attempt ${attempt + 1}):`, error)
+      
+      // Check if it's a 503 Service Unavailable error
+      const isOverloaded = error?.message?.includes('overloaded') || 
+                          error?.message?.includes('503') ||
+                          error?.status === 503
+      
+      if (isOverloaded && attempt < maxRetries - 1) {
+        // Wait before retrying, with exponential backoff
+        const delay = retryDelay * Math.pow(2, attempt)
+        await new Promise(resolve => setTimeout(resolve, delay))
+        continue
+      }
+      
+      // If it's the last attempt or not a retryable error
+      if (isOverloaded) {
+        throw new Error('AIサービスが混雑しています。しばらく時間をおいて再度お試しください。')
+      }
+      
+      throw new Error('文章の調整に失敗しました。API キーが正しく設定されているか確認してください。')
+    }
   }
+}
 }
