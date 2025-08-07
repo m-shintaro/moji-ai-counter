@@ -75,4 +75,7 @@ ${text}
       throw new Error('文章の調整に失敗しました。API キーが正しく設定されているか確認してください。')
     }
   }
+  
+  // This should never be reached, but TypeScript requires it
+  throw new Error('予期しないエラーが発生しました。')
 }
