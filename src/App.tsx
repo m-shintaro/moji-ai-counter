@@ -40,10 +40,10 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-github-dark-bg">
+    <div className="min-h-screen bg-github-dark-bg flex flex-col">
       <Header />
       
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
         <div className="space-y-6">
           <CharacterCounter counts={counts} />
           
