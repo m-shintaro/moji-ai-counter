@@ -2,16 +2,38 @@ import { useState } from 'react'
 
 interface AIAdjustPanelProps {
   currentCount: number
-  onAdjust: (targetCount: number, action: 'expand' | 'reduce' | 'auto') => void
+  onAdjust: (targetCount: number, action: 'expand' | 'reduce' | 'auto' | 'proofread' | 'keigo') => void
   isLoading: boolean
 }
 
 const AIAdjustPanel = ({ currentCount, onAdjust, isLoading }: AIAdjustPanelProps) => {
   const [targetCount, setTargetCount] = useState<number>(currentCount || 100)
 
-  const handleAdjust = (action: 'expand' | 'reduce' | 'auto') => {
-    if (targetCount > 0) {
+  const handleAdjust = (action: 'expand' | 'reduce' | 'auto' | 'proofread' | 'keigo') => {
+    if (action === 'proofread' || action === 'keigo') {
+      onAdjust(0, action)
+    } else if (targetCount > 0) {
       onAdjust(targetCount, action)
+    }
+  }
+
+  const getAdjustButtonText = () => {
+    if (targetCount > currentCount) {
+      return '文章を増やす'
+    } else if (targetCount < currentCount) {
+      return '文章を減らす'
+    } else {
+      return '調整不要'
+    }
+  }
+
+  const getAdjustAction = (): 'expand' | 'reduce' | 'auto' => {
+    if (targetCount > currentCount) {
+      return 'expand'
+    } else if (targetCount < currentCount) {
+      return 'reduce'
+    } else {
+      return 'auto'
     }
   }
 
@@ -44,25 +66,25 @@ const AIAdjustPanel = ({ currentCount, onAdjust, isLoading }: AIAdjustPanelProps
 
         <div className="flex space-x-3">
           <button
-            onClick={() => handleAdjust('expand')}
-            disabled={isLoading || targetCount <= currentCount}
+            onClick={() => handleAdjust(getAdjustAction())}
+            disabled={isLoading || targetCount === currentCount}
             className="flex-1 bg-github-dark-accent text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >
-            {isLoading ? '処理中...' : '文章を増やす'}
+            {isLoading ? '処理中...' : getAdjustButtonText()}
           </button>
           <button
-            onClick={() => handleAdjust('reduce')}
-            disabled={isLoading || targetCount >= currentCount}
+            onClick={() => handleAdjust('proofread')}
+            disabled={isLoading}
             className="flex-1 bg-github-dark-success text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >
-            {isLoading ? '処理中...' : '文章を減らす'}
+            {isLoading ? '処理中...' : '文章校正'}
           </button>
           <button
-            onClick={() => handleAdjust('auto')}
-            disabled={isLoading || targetCount === currentCount}
+            onClick={() => handleAdjust('keigo')}
+            disabled={isLoading}
             className="flex-1 bg-github-dark-border text-github-dark-text px-4 py-2 rounded-md hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >
-            {isLoading ? '処理中...' : '自動調整'}
+            {isLoading ? '処理中...' : '敬語に変換'}
           </button>
         </div>
 

@@ -20,7 +20,7 @@ function App() {
     }
   }, [error])
 
-  const handleAdjust = async (targetCount: number, action: 'expand' | 'reduce' | 'auto') => {
+  const handleAdjust = async (targetCount: number, action: 'expand' | 'reduce' | 'auto' | 'proofread' | 'keigo') => {
     if (!text.trim()) {
       setError('テキストを入力してください')
       return
