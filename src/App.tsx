@@ -20,7 +20,32 @@ function App() {
     }
   }, [error])
 
-  const handleAdjust = async (targetCount: number, action: 'expand' | 'reduce' | 'auto' | 'proofread' | 'keigo') => {
+  const handleConvertPunctuation = () => {
+    if (!text.trim()) {
+      setError('テキストを入力してください')
+      return
+    }
+
+    let result = text
+
+    // 読点: 、→，（「、」があれば），，→、（「、」がなく「，」があれば）
+    if (result.includes('、')) {
+      result = result.split('、').join('，')
+    } else if (result.includes('，')) {
+      result = result.split('，').join('、')
+    }
+
+    // 句点: 。→．（「。」があれば），．→。（「。」がなく「．」があれば）
+    if (result.includes('。')) {
+      result = result.split('。').join('．')
+    } else if (result.includes('．')) {
+      result = result.split('．').join('。')
+    }
+
+    setText(result)
+  }
+
+  const handleAdjust = async (targetCount: number, action: 'expand' | 'reduce' | 'auto' | 'proofread') => {
     if (!text.trim()) {
       setError('テキストを入力してください')
       return
@@ -52,6 +77,7 @@ function App() {
           <AIAdjustPanel
             currentCount={counts.withoutSpacesAndLineBreaks}
             onAdjust={handleAdjust}
+            onConvertPunctuation={handleConvertPunctuation}
             isLoading={isLoading}
           />
           

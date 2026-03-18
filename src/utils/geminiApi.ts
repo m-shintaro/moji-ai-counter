@@ -5,7 +5,7 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '')
 export const adjustText = async (
   text: string,
   targetCount: number,
-  action: 'expand' | 'reduce' | 'auto' | 'proofread' | 'keigo'
+  action: 'expand' | 'reduce' | 'auto' | 'proofread'
 ): Promise<string> => {
   if (!import.meta.env.VITE_GEMINI_API_KEY) {
     throw new Error('Gemini API key is not configured')
@@ -26,17 +26,6 @@ ${text}
 - 文章の意味や内容を変えないでください
 - 自然で読みやすい日本語にしてください
 - 校正済みの文章のみを返してください（説明は不要）`
-  } else if (action === 'keigo') {
-    prompt = `以下の文章を丁寧な敬語に変換してください。ビジネスメールや公式文書に適した丁寧な表現にしてください。
-
-元の文章:
-${text}
-
-注意事項:
-- 文章の意味や内容を変えないでください
-- 適切な敬語（尊敬語・謙譲語・丁寧語）を使用してください
-- 自然で丁寧な日本語にしてください
-- 変換後の文章のみを返してください（説明は不要）`
   } else if (action === 'expand' || (action === 'auto' && targetCount > currentCount)) {
     prompt = `以下の文章を約${targetCount}文字になるように詳細化・拡張してください。意味を保ちながら、より具体的な説明や例を追加してください。
 

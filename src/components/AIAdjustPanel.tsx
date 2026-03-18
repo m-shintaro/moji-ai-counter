@@ -2,15 +2,19 @@ import { useState } from 'react'
 
 interface AIAdjustPanelProps {
   currentCount: number
-  onAdjust: (targetCount: number, action: 'expand' | 'reduce' | 'auto' | 'proofread' | 'keigo') => void
+  onAdjust: (targetCount: number, action: 'expand' | 'reduce' | 'auto' | 'proofread') => void
+  onConvertPunctuation: () => void
   isLoading: boolean
 }
 
-const AIAdjustPanel = ({ currentCount, onAdjust, isLoading }: AIAdjustPanelProps) => {
+const AIAdjustPanel = ({ currentCount, onAdjust, onConvertPunctuation, isLoading }: AIAdjustPanelProps) => {
   const [targetCount, setTargetCount] = useState<number>(currentCount || 100)
 
-  const handleAdjust = (action: 'expand' | 'reduce' | 'auto' | 'proofread' | 'keigo') => {
-    if (action === 'proofread' || action === 'keigo') {
+  const baseButtonClassName =
+    'flex-1 rounded-md border border-github-dark-border bg-github-dark-bg px-4 py-2 font-medium text-github-dark-text shadow-sm transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-github-dark-accent focus:ring-offset-2 focus:ring-offset-github-dark-bg-secondary hover:-translate-y-0.5 hover:border-[#5b646e] hover:bg-[#151b23] hover:text-white hover:shadow-[0_8px_20px_rgba(0,0,0,0.24)] active:translate-y-0 active:bg-[#10161d] active:shadow-sm disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:border-github-dark-border disabled:hover:bg-github-dark-bg disabled:hover:text-github-dark-text'
+
+  const handleAdjust = (action: 'expand' | 'reduce' | 'auto' | 'proofread') => {
+    if (action === 'proofread') {
       onAdjust(0, action)
     } else if (targetCount > 0) {
       onAdjust(targetCount, action)
@@ -64,27 +68,27 @@ const AIAdjustPanel = ({ currentCount, onAdjust, isLoading }: AIAdjustPanelProps
           </span>
         </div>
 
-        <div className="flex space-x-3">
+        <div className="flex flex-col gap-3 md:flex-row">
           <button
             onClick={() => handleAdjust(getAdjustAction())}
             disabled={isLoading || targetCount === currentCount}
-            className="flex-1 bg-github-dark-accent text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+            className={baseButtonClassName}
           >
             {isLoading ? '処理中...' : getAdjustButtonText()}
           </button>
           <button
             onClick={() => handleAdjust('proofread')}
             disabled={isLoading}
-            className="flex-1 bg-github-dark-success text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+            className={baseButtonClassName}
           >
             {isLoading ? '処理中...' : '文章校正'}
           </button>
           <button
-            onClick={() => handleAdjust('keigo')}
+            onClick={onConvertPunctuation}
             disabled={isLoading}
-            className="flex-1 bg-github-dark-border text-github-dark-text px-4 py-2 rounded-md hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+            className={baseButtonClassName}
           >
-            {isLoading ? '処理中...' : '敬語に変換'}
+            句読点変換（、↔，　。↔．）
           </button>
         </div>
 
